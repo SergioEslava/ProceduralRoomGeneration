@@ -1,0 +1,47 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Parquetry.proto"
+EXTERNPROTO "../protos/Shadow.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.37579202235074555 -0.21972359995613097 0.9002787876873779 3.720785648075072
+  position 23.052786274781454 13.04298891068569 27.665780057931165
+}
+DEF Controller Robot {
+  controller "supervisor_controller"
+  supervisor TRUE
+}
+Shadow {
+  hidden linearVelocity_0 2.5768635962415814e-15 -4.075325935301325e-16 0
+  hidden angularVelocity_0 3.318708717389001e-16 -7.061550565025133e-16 3.5130543371496327e-15
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 100 100
+  floorAppearance Parquetry {
+    type "light strip"
+  }
+}
+Solid {
+  children [
+    Shape {
+      appearance PBRAppearance {
+        roughness 1
+        metalness 0
+      }
+      geometry DEF WALLS Mesh {
+        url [
+          "../../generatedRooms/wall_object.003.stl"
+        ]
+      }
+    }
+  ]
+}

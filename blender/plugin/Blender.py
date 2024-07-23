@@ -330,7 +330,7 @@ for i in bpy.data.objects:
 col = bpy.data.collections["Collection"]
 objs = {}
 
-with bpy.data.libraries.load("/home/usuario/cursoGeneracionProcedural/resources/Save1.blend") as (data_from, data_to):
+with bpy.data.libraries.load("/home/usuario/robocomp/components/proceduralRoomGeneration/blender/resources/Template.blend") as (data_from, data_to):
     for e in data_from.objects:
         data_to.objects.append(e)
 for e in data_to.objects:
@@ -534,7 +534,7 @@ for ob in bpy.context.scene.objects:
     if ob.type == 'MESH':
         # export the currently selected object to its own file based on its name
         bpy.ops.export_mesh.stl(filepath=os.path.join(
-            '~/robocomp/components/proceduralRoomGeneration/meshes/', 
+            '/home/usuario/robocomp/components/proceduralRoomGeneration/generatedRooms/', 
             ob.name + '.obj'
             ), use_selection=True)
 
