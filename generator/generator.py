@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import random
 import numpy as np
+import os
+import json
 
 def divide_rectangle(x, y, width, height, min_room_size, room_id_counter):
     if width <= min_room_size and height <= min_room_size:
@@ -161,6 +163,7 @@ def plot_flat(main_width, main_height, rooms):
     plt.xlim(0, main_width)
     plt.ylim(0, main_height)
     plt.gca().set_aspect('equal', adjustable='box')
+    plt.ion()
     plt.show()
 
     return rooms, corner_points, walls, doors
@@ -172,33 +175,69 @@ main_height = 15
 # Minimum room size
 min_room_size = 4
 
-# Generate the flat layout
-rooms = generate_flat_layout(main_width, main_height, min_room_size)
+working = True
 
-# Plot the flat layout and obtain rooms
-rooms, corner_points, walls, doors = plot_flat(main_width, main_height, rooms)
+while working:
+
+    # Generate the flat layout
+    rooms = generate_flat_layout(main_width, main_height, min_room_size)
+
+    # Plot the flat layout and obtain rooms
+    rooms, corner_points, walls, doors = plot_flat(main_width, main_height, rooms)
+
+    accept = input("Te vale??")
+    plt.close()
+    if accept == "n":
+        continue
+    elif accept == "y":
+        # Crear el mapeo de coordenadas a índices
+        coord_to_index = {coord: idx for idx, coord in enumerate(corner_points)}
+
+        # Crear la lista con los índices en lugar de coordenadas
+        indexed_wall_pairs = set(
+            (coord_to_index[start], coord_to_index[end])
+            for start, end, length in walls
+        )
+
+        # Find adjacent rooms for each room
+        adjacent_rooms = {room: find_adjacent_rooms(room, rooms) for room in rooms}
+
+        # Print adjacent rooms for each room by their IDs
+        for room, adjacent in adjacent_rooms.items():
+            x, y, width, height, room_id = room
+            print(f"Room ID {room_id} at {room} has adjacent rooms: {adjacent}")
+
+        data = dict()
+        data["rooms"] = []
+        data["doors"] = []
+        for i in rooms:
+            data["rooms"].append({"center" : (i[0] + (i[2] / 2), i[1] + (i[3] / 2)), "x" : i[2], "y" : i[3]})
+        for i in doors:
+            data["doors"].append({"center" : ((i[0][0] + i[1][0]) / 2, (i[0][1] + i[1][1]) / 2), "width" : abs(i[0][0] - i[1][0]) if (i[0][0] - i[1][0]) != 0 else abs(i[0][1] - i[1][1])})
+        data["vertices"] = list(corner_points)
+        data["holes"] = doors
+        data["edges"] = list(indexed_wall_pairs)
+
+        # Directorio donde se buscarán los archivos
+        directorio = '../generatedRooms'
+        os.makedirs(directorio, exist_ok=True)
+        # Contar los archivos en la carpeta
+        cantidad_archivos = len([f for f in os.listdir(directorio) if os.path.isdir(os.path.join(directorio, f))])
+
+        print(cantidad_archivos)
+        os.makedirs(directorio + "/" + str(cantidad_archivos), exist_ok=True)
+
+        # Crear un nombre de archivo basado en la cantidad de archivos
+        nombre_archivo = "apartmentData.json"
 
 
-# Crear el mapeo de coordenadas a índices
-coord_to_index = {coord: idx for idx, coord in enumerate(corner_points)}
+        # Ruta completa para el archivo JSON
+        ruta_archivo = os.path.join(directorio + "/" + str(cantidad_archivos), nombre_archivo)
 
-# Crear la lista con los índices en lugar de coordenadas
-indexed_wall_pairs = set(
-    (coord_to_index[start], coord_to_index[end])
-    for start, end, length in walls
-)
+        # Guardar los datos en el archivo JSON
+        with open(ruta_archivo, 'w') as archivo_json:
+            json.dump(data, archivo_json)
 
-# Imprimir el resultado
-
-# Find adjacent rooms for each room
-adjacent_rooms = {room: find_adjacent_rooms(room, rooms) for room in rooms}
-
-# Print adjacent rooms for each room by their IDs
-for room, adjacent in adjacent_rooms.items():
-    x, y, width, height, room_id = room
-    print(f"Room ID {room_id} at {room} has adjacent rooms: {adjacent}")
-
-# Print corner points
-print("vertices=", list(corner_points))
-print("holes=", doors)
-print("edges=", list(indexed_wall_pairs))
+        print(f"Archivo guardado como {ruta_archivo}")
+    elif accept == "e":
+        working = False
