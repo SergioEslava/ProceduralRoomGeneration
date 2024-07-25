@@ -82,12 +82,16 @@ def create_hole(hole_position, hole_object, target_object, hole_orientation):
     bool_modifier.object = hole_object.blender_object
 
     # Recalculate normals for the hole object
-
     bpy.ops.object.mode_set(mode='EDIT')  # Switch to Edit Mode
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.normals_make_consistent(inside=False)  # Recalculate normals
     bpy.ops.object.mode_set(mode='OBJECT')  # Switch back to Object Mode
 
+    # Hacer que el objeto sea el objeto activo y seleccionarlo
+    bpy.context.view_layer.objects.active = target_object.blender_object
+    target_object.blender_object.select_set(True)
+    bpy.ops.object.modifier_apply(modifier=bool_modifier.name)
+    
     # Hide the hole object
     bpy.context.view_layer.objects.active = hole_object.blender_object
     bpy.context.view_layer.objects.active.hide_set(True)
@@ -163,29 +167,18 @@ for hole in holes:
         create_hole(hole_position=((hole[0][0] + hole[1][0]) / 2, (hole[0][1] + hole[1][1]) / 2, 0.0), hole_object=doorHole,
                 target_object=floor_plan, hole_orientation=(0.0, 0.0, 0.0))
 
-# Hacer que el objeto sea el objeto activo y seleccionarlo
-bpy.context.view_layer.objects.active = floor_plan
-floor_plan.select_set(True)
-for modifier in floor_plan.blender_object.modifiers:
-    bpy.ops.object.modifier_apply(modifier=modifier.name)
-
 # deselect all objects
 bpy.ops.object.select_all(action='DESELECT')    
 
-# loop through all the objects in the scene
-for ob in bpy.context.scene.objects:
-    # make the current object active and select it
-    bpy.context.view_layer.objects.active = ob
-    ob.select_set(state=True)
+# make the current object active and select it
+bpy.context.view_layer.objects.active = floor_plan.blender_object
+floor_plan.blender_object.select_set(state=True)
 
-    # make sure that we only export meshes
-    if ob.type == 'MESH':
-        # export the currently selected object to its own file based on its name
-        bpy.ops.export_mesh.stl(filepath=os.path.join(
-            '/home/usuario/robocomp/Repositories/proceduralRoomGeneration/generatedRooms/', 
-            ob.name + '.stl'
-            ), use_selection=True)
-
-    # deselect the object and move on to another if any more are left
-    ob.select_set(state=False)
+# make sure that we only export meshes
+if floor_plan.blender_object.type == 'MESH':
+    # export the currently selected object to its own file based on its name
+    bpy.ops.export_mesh.stl(filepath=os.path.join(
+        '/home/sergio/Repositories/proceduralRoomGeneration/generatedRooms/', 
+        floor_plan.blender_object.name + '.stl'
+        ), use_selection=True)
 
