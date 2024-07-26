@@ -11,9 +11,12 @@ urlField = node.getField("url")
 
 # Lista de rutas de los meshes para cambiar (ejemplo)
 mesh_paths = [
-    "../../generatedRooms/wall_object.003.stl",
-    "../../generatedRooms/wall_object.005.stl",
-    "../../generatedRooms/wall_object.006.stl"
+    "../../generatedRooms/0/ApartmentFloorPlan.stl",
+    "../../generatedRooms/1/ApartmentFloorPlan.stl",
+    "../../generatedRooms/2/ApartmentFloorPlan.stl",
+    "../../generatedRooms/3/ApartmentFloorPlan.stl",
+    "../../generatedRooms/4/ApartmentFloorPlan.stl",
+    "../../generatedRooms/5/ApartmentFloorPlan.stl"
 ]
 
 
