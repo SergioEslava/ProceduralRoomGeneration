@@ -169,11 +169,11 @@ def plot_flat(main_width, main_height, rooms):
     return rooms, corner_points, walls, doors
 
 # Main rectangle (flat) dimensions
-main_width = 20
-main_height = 15
+main_width = 11
+main_height = 8
 
 # Minimum room size
-min_room_size = 4
+min_room_size = 2
 
 working = True
 

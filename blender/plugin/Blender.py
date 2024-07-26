@@ -182,7 +182,10 @@ def process_apartment(file_path):
 
 # Main loop to process multiple apartments
 base_path = '/home/usuario/robocomp/components/proceduralRoomGeneration/generatedRooms/'
-for i in range(0, 6):
+# Get the number of existing apartments folders
+folders = [f for f in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, f))]
+
+for i in range(len(folders)):
     file_path = os.path.join(base_path, str(i), 'apartmentData.json')
     if os.path.exists(file_path):
         process_apartment(file_path)
