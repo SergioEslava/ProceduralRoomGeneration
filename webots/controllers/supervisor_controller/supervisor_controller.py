@@ -24,7 +24,7 @@ print(f"Meshes disponibles: {mesh_paths}")
 
 
 # Función para modificar el campo url
-def update_mesh():
+def update_mesh_random():
     new_mesh_path = random.choice(mesh_paths)
     urlField.setMFString(0, new_mesh_path)
     time.sleep(0.1)
@@ -44,7 +44,7 @@ while supervisor.step(timeStep) != -1:
         # Verifica si se ha pulsado alguna tecla
     key = supervisor.keyboard.getKey()
     if key == ord('R'):
-        update_mesh()
+        update_mesh_random()
         supervisor.simulationReset()
     if key == ord('A'):
         mesh_index -= 1
