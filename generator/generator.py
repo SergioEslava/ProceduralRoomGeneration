@@ -92,7 +92,6 @@ def plot_flat(main_width, main_height, rooms):
         plt.text(x + width / 2, y + height / 2, str(room_id), color='black', fontsize=12, ha='center', va='center')
 
         corners = [(x, y, 0), (x + width, y, 0), (x, y + height, 0), (x + width, y + height, 0)]
-        print(corners)
         corner_points.update(corners)
 
         # Collect wall segments
@@ -168,6 +167,49 @@ def plot_flat(main_width, main_height, rooms):
 
     return rooms, corner_points, walls, doors
 
+def save_apartment():
+    global data
+    # Crear el mapeo de coordenadas a índices
+    coord_to_index = {coord: idx for idx, coord in enumerate(corner_points)}
+    # Crear la lista con los índices en lugar de coordenadas
+    indexed_wall_pairs = set(
+        (coord_to_index[start], coord_to_index[end])
+        for start, end, length in walls
+    )
+    # Find adjacent rooms for each room
+    adjacent_rooms = {room: find_adjacent_rooms(room, rooms) for room in rooms}
+    # Print adjacent rooms for each room by their IDs
+    for room, adjacent in adjacent_rooms.items():
+        x, y, width, height, room_id = room
+        print(f"Room ID {room_id} at {room} has adjacent rooms: {adjacent}")
+    data = dict()
+    data["rooms"] = []
+    data["doors"] = []
+    for i in rooms:
+        data["rooms"].append({"center": (i[0] + (i[2] / 2), i[1] + (i[3] / 2)), "x": i[2], "y": i[3]})
+    for i in doors:
+        data["doors"].append({"center": ((i[0][0] + i[1][0]) / 2, (i[0][1] + i[1][1]) / 2),
+                              "width": abs(i[0][0] - i[1][0]) if (i[0][0] - i[1][0]) != 0 else abs(i[0][1] - i[1][1])})
+    data["vertices"] = list(corner_points)
+    data["holes"] = doors
+    data["edges"] = list(indexed_wall_pairs)
+    # Directorio donde se buscarán los archivos
+    directorio = '../generatedRooms'
+    os.makedirs(directorio, exist_ok=True)
+    # Contar los archivos en la carpeta
+    cantidad_archivos = len([f for f in os.listdir(directorio) if os.path.isdir(os.path.join(directorio, f))])
+    os.makedirs(directorio + "/" + str(cantidad_archivos), exist_ok=True)
+    # Crear un nombre de archivo basado en la cantidad de archivos
+    nombre_archivo = "apartmentData.json"
+    # Ruta completa para el archivo JSON
+    ruta_archivo = os.path.join(directorio + "/" + str(cantidad_archivos), nombre_archivo)
+    # Guardar los datos en el archivo JSON
+    with open(ruta_archivo, 'w') as archivo_json:
+        json.dump(data, archivo_json)
+    print(f"Archivo guardado como {ruta_archivo}")
+
+
+
 # Main rectangle (flat) dimensions
 main_width = 11
 main_height = 8
@@ -179,65 +221,19 @@ working = True
 
 while working:
 
+
+
     # Generate the flat layout
     rooms = generate_flat_layout(main_width, main_height, min_room_size)
-
     # Plot the flat layout and obtain rooms
     rooms, corner_points, walls, doors = plot_flat(main_width, main_height, rooms)
 
-    accept = input("Te vale??")
+    print("-------------------------------------------------------------------")
+    accept = input("Do you accept room layout? (n/y/e)")
     plt.close()
     if accept == "n":
         continue
     elif accept == "y":
-        # Crear el mapeo de coordenadas a índices
-        coord_to_index = {coord: idx for idx, coord in enumerate(corner_points)}
-
-        # Crear la lista con los índices en lugar de coordenadas
-        indexed_wall_pairs = set(
-            (coord_to_index[start], coord_to_index[end])
-            for start, end, length in walls
-        )
-
-        # Find adjacent rooms for each room
-        adjacent_rooms = {room: find_adjacent_rooms(room, rooms) for room in rooms}
-
-        # Print adjacent rooms for each room by their IDs
-        for room, adjacent in adjacent_rooms.items():
-            x, y, width, height, room_id = room
-            print(f"Room ID {room_id} at {room} has adjacent rooms: {adjacent}")
-
-        data = dict()
-        data["rooms"] = []
-        data["doors"] = []
-        for i in rooms:
-            data["rooms"].append({"center" : (i[0] + (i[2] / 2), i[1] + (i[3] / 2)), "x" : i[2], "y" : i[3]})
-        for i in doors:
-            data["doors"].append({"center" : ((i[0][0] + i[1][0]) / 2, (i[0][1] + i[1][1]) / 2), "width" : abs(i[0][0] - i[1][0]) if (i[0][0] - i[1][0]) != 0 else abs(i[0][1] - i[1][1])})
-        data["vertices"] = list(corner_points)
-        data["holes"] = doors
-        data["edges"] = list(indexed_wall_pairs)
-
-        # Directorio donde se buscarán los archivos
-        directorio = '../generatedRooms'
-        os.makedirs(directorio, exist_ok=True)
-        # Contar los archivos en la carpeta
-        cantidad_archivos = len([f for f in os.listdir(directorio) if os.path.isdir(os.path.join(directorio, f))])
-
-        print(cantidad_archivos)
-        os.makedirs(directorio + "/" + str(cantidad_archivos), exist_ok=True)
-
-        # Crear un nombre de archivo basado en la cantidad de archivos
-        nombre_archivo = "apartmentData.json"
-
-
-        # Ruta completa para el archivo JSON
-        ruta_archivo = os.path.join(directorio + "/" + str(cantidad_archivos), nombre_archivo)
-
-        # Guardar los datos en el archivo JSON
-        with open(ruta_archivo, 'w') as archivo_json:
-            json.dump(data, archivo_json)
-
-        print(f"Archivo guardado como {ruta_archivo}")
+        save_apartment()
     elif accept == "e":
         working = False
