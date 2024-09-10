@@ -5,7 +5,7 @@ sceneTreePerspectives: 000000ff00000001000000030000001c000000c0000001b6010000000
 maximizedDockId: -1
 centralWidgetVisible: 1
 orthographicViewHeight: 1
-textFiles: 0 "../../../../robocomp_ws/src/robocomp/components/proceduralRoomGeneration/webots/controllers/supervisor_controller/supervisor_controller.py"
+textFiles: 0 "../../../robocomp_ws/src/robocomp/components/proceduralRoomGeneration/webots/controllers/supervisor_controller/supervisor_controller.py"
 consoles: Console:All:All
-renderingDevicePerspectives: shadow:camera_360_1;1;0.447917;0;0
-renderingDevicePerspectives: shadow:camera_360_2;1;0.447917;0;0
+renderingDevicePerspectives: shadow:camera_360_1;0;0.235417;0;0
+renderingDevicePerspectives: shadow:camera_360_2;0;0.235417;0;0
